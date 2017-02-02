@@ -3,10 +3,6 @@ require('reflect-metadata');
 var Context;
 (function (Context) {
     Context.contextItems = [];
-    function find(context, key) {
-        return findItemByType(context, key) || findByName(context, key);
-    }
-    Context.find = find;
     function findItemByType(context, type) {
         return context.find(function (item) { return item.type === type; });
     }
@@ -22,10 +18,10 @@ var Context;
         return context.filter(function (item) { return item.type == undefined || item.type !== type; });
     }
     Context.removeItemByType = removeItemByType;
-    function findByName(context, name) {
+    function findItemByName(context, name) {
         return context.find(function (item) { return item.name === name; });
     }
-    Context.findByName = findByName;
+    Context.findItemByName = findItemByName;
     function addItemByName(context, name, value) {
         return removeItemByName(context, name).concat([{
                 name: name,
@@ -36,17 +32,18 @@ var Context;
     function removeItemByName(context, name) {
         return context.filter(function (item) { return item.name == undefined || item.name !== name; });
     }
-})(Context || (Context = {}));
+    Context.removeItemByName = removeItemByName;
+})(Context = exports.Context || (exports.Context = {}));
 function bind(name) {
     return function (target, propertyKey) {
-        if (name) {
-            var contextItem_1 = Context.find(Context.contextItems, name);
+        if (typeof name === 'string') {
+            var contextItem_1 = Context.findItemByName(Context.contextItems, name);
             return target[propertyKey] = contextItem_1 && contextItem_1.value;
         }
         var metadata = Reflect.getMetadata('design:type', target, propertyKey);
         if (!metadata)
             throw new Error('No metadata! Make sure "emitDecoratorMetadata" is set to "true" in "tsconfig.json"');
-        var contextItem = Context.find(Context.contextItems, metadata);
+        var contextItem = Context.findItemByType(Context.contextItems, metadata);
         return target[propertyKey] = contextItem && contextItem.value;
     };
 }

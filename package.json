@@ -14,7 +14,7 @@
     "start": "node dist/index.js",
     "start:watch": "nodemon --watch dist --watch conf dist/index.js",
     "tdd": "concurrently -r 'npm run watch' 'npm run test:watch'",
-    "test": "istanbul cover ./node_modules/mocha/bin/_mocha -- **/*.spec.js",
+    "test": "istanbul cover -x '**/*.spec.js' ./node_modules/mocha/bin/_mocha -- **/*.spec.js",
     "test:watch": "nodemon --watch dist --watch test --exec 'npm run test'",
     "tsc": "node_modules/typescript/bin/tsc",
     "tslint": "node_modules/tslint/bin/tslint",
@@ -24,6 +24,8 @@
     "reflect-metadata": "^0.1.9"
   },
   "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.38",
     "@types/node": "^6.0.48",
     "chai": "^3.5.0",
     "concurrently": "^3.1.0",

@@ -1,18 +1,14 @@
 import 'reflect-metadata'
 
-namespace Context {
+export namespace Context {
 
-  interface ContextItem {
+  export interface ContextItem {
     name?: string
     type?: Function
     value: any
   }
 
   export let contextItems: ContextItem[] = []
-
-  export function find(context: ContextItem[], key: any): ContextItem {
-    return findItemByType(context, key) || findByName(context, key)
-  }
 
   export function findItemByType(context: ContextItem[], type: Function): ContextItem {
     return (context as any).find(item => item.type === type)
@@ -29,7 +25,7 @@ namespace Context {
     return context.filter(item => item.type == undefined || item.type !== type)
   }
 
-  export function findByName(context: ContextItem[], name: string): ContextItem {
+  export function findItemByName(context: ContextItem[], name: string): ContextItem {
     return (context as any).find((item) => item.name === name)
   }
 
@@ -40,20 +36,20 @@ namespace Context {
     }])
   }
 
-  function removeItemByName(context: ContextItem[], name: string): ContextItem[] {
+  export function removeItemByName(context: ContextItem[], name: string): ContextItem[] {
     return context.filter(item => item.name == undefined || item.name !== name)
   }
 }
 
 export function bind(name?: string) {
   return function (target: any, propertyKey: string) {
-    if (name) {
-      const contextItem = Context.find(Context.contextItems, name)
+    if (typeof name === 'string') {
+      const contextItem = Context.findItemByName(Context.contextItems, name)
       return target[propertyKey] = contextItem && contextItem.value
     }
     let metadata = Reflect.getMetadata('design:type', target, propertyKey)
     if (!metadata) throw new Error('No metadata! Make sure "emitDecoratorMetadata" is set to "true" in "tsconfig.json"')
-    const contextItem = Context.find(Context.contextItems, metadata)
+    const contextItem = Context.findItemByType(Context.contextItems, metadata)
     return target[propertyKey] = contextItem && contextItem.value
   }
 }
