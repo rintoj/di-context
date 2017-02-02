@@ -1,6 +1,6 @@
 {
   "name": "di-context",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Dependency injection library for TypeScript based project. Build with React/React-Native in mind",
   "main": "dist/index.js",
   "typing": "dist/index.d.ts",
